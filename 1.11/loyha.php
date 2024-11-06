@@ -28,9 +28,11 @@
     </div>
 
     <?php
+
+      require 'DB.php';
+      $db = new DB();
+      $pdo = $db->pdo;
       const Recquired_work_h_day = 8;
-      $dsn = 'mysql:host=localhost;dbname=work_tracker';
-      $pdo = new PDO($dsn,'root','20071010');
       if (isset($_POST['name']) && isset($_POST['arrived_at']) && isset($_POST['leaved_at']))
       {
         if(!empty($_POST['name']) && !empty($_POST['arrived_at']) && !empty($_POST['leaved_at']))
@@ -44,7 +46,7 @@
           $hour = $diff->h;
           $minute = $diff->i;
           $second = $diff->s;
-          $total = ((Recquired_work_h_day*3600)-($hour*3600)+($minute*60));
+          $total = ((Recquired_work_h_day*3600)-(($hour*3600)+($minute*60)));
           
           $query = "INSERT INTO infors (name,arrived_at,leaved_at,required_of) VALUES(:name,:arrived_at,:leaved_at,:required_of)";
           $stmt = $pdo->prepare($query);
@@ -54,6 +56,8 @@
           $stmt->bindValue(':leaved_at',$leaved_at->format('Y-m-d H:i'));
           $stmt->bindParam(':required_of',$total);
           $stmt->execute();
+          header('Location: loyha.php');
+          return;
         }
       }
 
